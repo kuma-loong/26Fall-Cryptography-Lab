@@ -1,0 +1,60 @@
+{
+  "note": "这里是密文，没有密钥。攻击者程序只能读到这些。",
+  "key_length": 16,
+  "messages": [
+    {
+      "id": "M1",
+      "sender": "Alice",
+      "to": "Bob",
+      "date": "2026-03-15",
+      "place": "Library",
+      "format": "aligned",
+      "ciphertext_hex": "08096a96a3a0475152d184e5931b4b1a43f16df7956aa0ba8a53ece25932f60b90cd57ec0e9013c73633feca93e40681050d523d65fc1ba9c33a5f9cc695f9ea"
+    },
+    {
+      "id": "M2",
+      "sender": "Alice",
+      "to": "Bob",
+      "date": "2026-03-15",
+      "place": "Gym",
+      "format": "aligned",
+      "ciphertext_hex": "08096a96a3a0475152d184e5931b4b1a43f16df7956aa0ba8a53ece25932f60b90cd57ec0e9013c73633feca93e40681afed40e112212decde60a35b5fc8422e"
+    },
+    {
+      "id": "M3",
+      "sender": "Alice",
+      "to": "Bob",
+      "date": "2026-03-22",
+      "place": "Library",
+      "format": "aligned",
+      "ciphertext_hex": "08096a96a3a0475152d184e5931b4b1a43f16df7956aa0ba8a53ece25932f60bb7ad3eb18b72990bd67d73adcb0ea5f4050d523d65fc1ba9c33a5f9cc695f9ea"
+    },
+    {
+      "id": "M4",
+      "sender": "Carol",
+      "to": "Dave",
+      "date": "2026-03-15",
+      "place": "Office",
+      "format": "aligned",
+      "ciphertext_hex": "8a75dc86c8b472ad42785f678d721fdb9bc0063c59de33b9212d2bdd3ca9d3f990cd57ec0e9013c73633feca93e4068180f2e79ac6ec0f53aff4fa0234092d73"
+    },
+    {
+      "id": "M5",
+      "sender": "Bob",
+      "to": "Alice",
+      "date": "2026-04-01",
+      "place": "Cafe",
+      "format": "aligned",
+      "ciphertext_hex": "f72917986023578132aba98029dd28e7e4c0e1f232a008f167512b19795f50ef0fc67efdf61a98fd0b7b5dbc4c57ab673c7df188c4870b965e23edbe960ab2c3"
+    },
+    {
+      "id": "M6",
+      "sender": "Alice",
+      "to": "Carol",
+      "date": "2026-03-15",
+      "place": "Library",
+      "format": "aligned",
+      "ciphertext_hex": "08096a96a3a0475152d184e5931b4b1aac1f9681fc3a7c6817285ba00b1b846390cd57ec0e9013c73633feca93e40681050d523d65fc1ba9c33a5f9cc695f9ea"
+    }
+  ]
+}
