@@ -6,7 +6,7 @@
 
 | 目录 | 实验 | 状态 |
 | --- | --- | --- |
-| [lab1/](lab1/) | AES 的 ECB 模式安全性分析：模式泄露、密文分组拼接与 CBC / GCM 防御对照 | 课程初始内容 |
+| [lab1/](lab1/) | AES 的 ECB 模式安全性分析：模式泄露、密文分组拼接与 CBC / GCM 防御对照 | 已实现多字段拼接、自动搜索并验证 |
 
 ## 实验一目录
 
@@ -23,22 +23,39 @@ lab1/
     └── tools/    # 课程包附带的参考实现及验证工具
 ```
 
-实验一从本地收到的课程包导入，保留源码和示例数据原样；初始提交不表示已完成个人实验。
+实验一从本地收到的课程包导入；初始内容见提交 `578ae92`。后续在任务一增加整分组填充实测，在任务四增加多字段拼接和自动搜索，并加入独立回归检查。
 
 ## 运行实验一
 
 使用 Python 3.8 或更新版本，安装正式的 `cryptography` 库：
 
 ```sh
-python3 -m venv .venv
+uv venv .venv
+uv pip install --python .venv/bin/python cryptography==50.0.2
 source .venv/bin/activate
-python -m pip install cryptography
 cd lab1/aes-lab/code
 python check_env.py
 python run_all.py
 ```
 
 `run_all.py` 会依次运行课程包提供的 11 个步骤，不包含任务四的交互模式。需要交互体验时运行 `python task4_forge.py`。
+
+在 `code/` 中可运行扩展功能和回归检查：
+
+```sh
+# 一次修改三个字段，分组来自 M4、M1、M3、M2。
+python task4_forge.py -t M1 --replace From=M4 --replace Date=M3 --replace Place=M2
+python bob_decrypt.py -i ../data/forged.ct
+
+# 根据历史库的已知明文标注，搜索出来自四条不同消息的取块配方。
+python task4_forge.py -t M1 --want From=Bob --want To=Carol --want Date=2026-03-22 --want Place=Gym
+python bob_decrypt.py -i ../data/forged.ct
+python -m unittest -v test_lab1.py
+```
+
+自动搜索以历史库中存在对应字段为前提，只使用已知的同位置密文块。攻击工具只导入标准库和 `block_utils`，解密检查在 Bob 或测试代码中执行。
+
+`test_lab1.py` 检查全部 1296 种字段来源组合、单字段兼容、自动搜索和导入隔离。任务六原演示使用固定 CBC IV、重复 GCM nonce，属于故意设置的反例；同前缀 CBC 密文块相同的观察依赖相同 IV，不能推广到独立随机 IV。
 
 `tools/_devshim/` 是课程包自带的验证垫片，日常实验使用正式安装的 `cryptography`。`tools/gen_truth.py` 生成的 `_truth_output.md` 属于本地产物，不纳入版本控制。
 

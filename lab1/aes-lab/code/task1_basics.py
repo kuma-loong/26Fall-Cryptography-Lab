@@ -52,6 +52,13 @@ def main() -> None:
     print(f"明文 {len(plain_naive)} 字节 -> 密文 {n} 字节")
     print(f"其中 {pad} 字节是 PKCS#7 填充，用来把明文凑满 16 的整数倍。")
     print("思考：如果明文长度恰好是 16 的整数倍，会补多少？")
+    print("实测整分组明文（每个填充字节均为 0x10）：")
+    for size in (0, 16, 32, 48):
+        sample = b"A" * size
+        encrypted = ecb_encrypt(DEMO_KEY, sample)
+        print(f"  明文 {size:2} 字节 -> 密文 {len(encrypted):2} 字节，"
+              f"补 {len(encrypted) - size} 字节，"
+              f"解密还原：{ecb_decrypt(DEMO_KEY, encrypted) == sample}")
 
     # ---- 3. 切片：取出各个分组 -------------------------------------------
     section("3. 用切片取出每一个分组")

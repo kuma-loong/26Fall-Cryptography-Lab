@@ -7,10 +7,12 @@ Mallory 的程序。给它一条目标消息和一个字段，它从历史密文
     python task4_forge.py                                交互模式
     python task4_forge.py -t M1 -f Place -s M2           直接指定
     python task4_forge.py -t M1 -f Place -s M2 -o data/x.ct
+    python task4_forge.py -t M1 --replace From=M4 --replace Date=M3 --replace Place=M2
+    python task4_forge.py -t M1 --want From=Bob --want To=Carol --want Date=2026-03-22 --want Place=Gym
 
 ⚠️ 脚本自检：本文件**只** import block_utils，不 import ecb_common。
    跑下面这行可以确认「没有密钥也能伪造」：
-       python -c "import ast,sys; print([n.names[0].name for n in ast.walk(ast.parse(open('task4_forge.py',encoding='utf-8').read())) if isinstance(n, ast.ImportFrom)])"
+       python -c "import ast; t=ast.parse(open('task4_forge.py',encoding='utf-8').read()); print(sorted({n.module for n in ast.walk(t) if isinstance(n,ast.ImportFrom)}))"
 """
 
 from __future__ import annotations
@@ -86,25 +88,35 @@ def pick(prompt: str, options: list[str]) -> str:
 
 
 def forge(history: list[dict], target_id: str, field: str, source_id: str) -> tuple[bytes, str]:
-    """核心：把 source 的对应分组搬到 target 上。"""
+    """兼容课程原有的单字段接口。"""
+    return forge_many(history, target_id, {field: source_id})
+
+
+def forge_many(history: list[dict], target_id: str, sources: dict[str, str]) -> tuple[bytes, str]:
+    """按字段替换分组，允许每个字段来自不同消息；只读密文与格式信息。"""
     target = find(history, target_id)
-    source = find(history, source_id)
-
-    idx = FIELD_TO_BLOCK[field]
-    t_blocks = blocks_of(target)
-    s_blocks = blocks_of(source)
-
-    forged_blocks = list(t_blocks)
-    forged_blocks[idx] = s_blocks[idx]
+    original = blocks_of(target)
+    forged_blocks = list(original)
+    origins = [target_id] * 4
+    for field, source_id in sources.items():
+        idx = FIELD_TO_BLOCK[field]
+        forged_blocks[idx] = blocks_of(find(history, source_id))[idx]
+        origins[idx] = source_id
     forged = from_blocks(forged_blocks)
 
     recipe_lines = []
     for i, b in enumerate(forged_blocks):
-        origin = source_id if i == idx else target_id
-        mark = "  <-- 换掉了" if i == idx else ""
+        origin = origins[i]
+        mark = "  <-- 换掉了" if b != original[i] else ""
         recipe_lines.append(f"  分组{i}: {b.hex()}   来自 {origin}.分组{i}{mark}")
 
     return forged, "\n".join(recipe_lines)
+
+
+def search_sources(history: list[dict], wanted: dict[str, str]) -> dict[str, str]:
+    """利用历史库的已知明文标注搜索同位置分组，不生成未见过的明文块。"""
+    return {field: next(msg["id"] for msg in history if msg[FIELD_KEY[field]] == value)
+            for field, value in wanted.items()}
 
 
 def interactive(history: list[dict]) -> tuple[str, str, str]:
@@ -167,20 +179,29 @@ def main() -> None:
     ap.add_argument("-t", "--target", help="要伪造的消息编号，如 M1")
     ap.add_argument("-f", "--field", choices=list(FIELD_TO_BLOCK.keys()), help="要改的字段")
     ap.add_argument("-s", "--source", help="取块来源的消息编号，如 M2")
+    extension = ap.add_mutually_exclusive_group()
+    extension.add_argument("--replace", action="append", default=[], metavar="FIELD=ID",
+                           help="替换字段的来源，可重复指定，例如 --replace From=M4 --replace Place=M2")
+    extension.add_argument("--want", action="append", default=[], metavar="FIELD=VALUE",
+                           help="按历史库已知明文标注自动搜索，可重复指定；其余字段沿用目标消息")
     ap.add_argument("-o", "--out", default=None, help="输出密文文件（默认 data/forged.ct）")
     args = ap.parse_args()
 
     history = load_history()
 
-    if args.target and args.field and args.source:
+    if args.replace or args.want:
+        target_id = args.target
+        values = dict(item.split("=", 1) for item in (args.replace or args.want))
+        sources = values if args.replace else search_sources(history, values)
+    elif args.target and args.field and args.source:
         target_id, field, source_id = args.target, args.field, args.source
+        sources = {field: source_id}
     else:
         target_id, field, source_id = interactive(history)
+        sources = {field: source_id}
 
     target = find(history, target_id)
-    source = find(history, source_id)
-
-    forged, recipe = forge(history, target_id, field, source_id)
+    forged, recipe = forge_many(history, target_id, sources)
 
     print()
     print(SEP)
@@ -188,9 +209,8 @@ def main() -> None:
     print(SEP)
     print(f"目标消息 {target_id}：{target['sender']} -> {target['to']}  "
           f"{target['date']}  {target['place']}")
-    print(f"取块来源 {source_id}：{source['sender']} -> {source['to']}  "
-          f"{source['date']}  {source['place']}")
-    print(f"改动的字段：{FIELD_LABEL[field]}（分组 {FIELD_TO_BLOCK[field]}）")
+    for field, source_id in sources.items():
+        print(f"指定字段：{FIELD_LABEL[field]}（分组 {FIELD_TO_BLOCK[field]}） <- {source_id}")
     print()
     print("取块配方：")
     print(recipe)
