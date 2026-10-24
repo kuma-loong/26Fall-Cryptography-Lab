@@ -3,6 +3,7 @@
 !/.gitignore
 !/README.md
 !/lab1/
+!/lab2/
 
 # Lab 1: original source files and the four reviewed course sample data files.
 /lab1/**
@@ -14,6 +15,12 @@
 !/lab1/aes-lab/data/message.json
 !/lab1/aes-lab/data/message.ct
 !/lab1/aes-lab/data/forged.ct
+
+# Lab 2: completed runtime scripts and original course inputs.
+/lab2/**
+!/lab2/**/
+!/lab2/lab2-RSA/rsa-lab/code/*.py
+!/lab2/lab2-RSA/rsa-lab/data/homework.pdf.enc.asc
 
 # Personal materials and reports, including copies inside a source directory.
 .local/
@@ -50,9 +57,15 @@ results/
 !/lab1/aes-lab/0-实验指导.pdf
 !/lab1/aes-lab/1-实验原理.pdf
 !/lab1/aes-lab/2-实验步骤.pdf
+!/lab2/lab2-RSA/密码学基础-2-RSA 共享素因子攻击.pdf
+!/lab2/lab2-RSA/rsa-lab/0-实验指导.pdf
+!/lab2/lab2-RSA/rsa-lab/1-实验原理.pdf
+!/lab2/lab2-RSA/rsa-lab/2-实验步骤.pdf
+!/lab2/lab2-RSA/rsa-lab/data/moduli.txt
 
 # The original blank report template is public; completed reports stay private.
 !/lab1/密码学基础实验一报告（模板）.doc
+!/lab2/lab2-RSA/密码学基础实验二报告（模板）.doc
 
 # Local configuration, credentials, caches, and generated artifacts.
 .env
