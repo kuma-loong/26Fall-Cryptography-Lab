@@ -4,6 +4,7 @@
 !/README.md
 !/lab1/
 !/lab2/
+!/lab3/
 
 # Lab 1: original source files and the four reviewed course sample data files.
 /lab1/**
@@ -21,6 +22,13 @@
 !/lab2/**/
 !/lab2/lab2-RSA/rsa-lab/code/*.py
 !/lab2/lab2-RSA/rsa-lab/data/homework.pdf.enc.asc
+
+# Lab 3: completed runtime scripts and original collision blocks.
+/lab3/**
+!/lab3/**/
+!/lab3/lab3-hash/hash-lab/code/*.py
+!/lab3/lab3-hash/hash-lab/data/collision_a.bin
+!/lab3/lab3-hash/hash-lab/data/collision_b.bin
 
 # Personal materials and reports, including copies inside a source directory.
 .local/
@@ -62,10 +70,15 @@ results/
 !/lab2/lab2-RSA/rsa-lab/1-实验原理.pdf
 !/lab2/lab2-RSA/rsa-lab/2-实验步骤.pdf
 !/lab2/lab2-RSA/rsa-lab/data/moduli.txt
+!/lab3/lab3-hash/课件-哈希长度扩展与碰撞攻击.pdf
+!/lab3/lab3-hash/hash-lab/0-实验指导.pdf
+!/lab3/lab3-hash/hash-lab/1-实验原理.pdf
+!/lab3/lab3-hash/hash-lab/2-实验步骤.pdf
 
 # The original blank report template is public; completed reports stay private.
 !/lab1/密码学基础实验一报告（模板）.doc
 !/lab2/lab2-RSA/密码学基础实验二报告（模板）.doc
+!/lab3/lab3-hash/实验报告模板-哈希的长度扩展与碰撞攻击.docx
 
 # Local configuration, credentials, caches, and generated artifacts.
 .env
